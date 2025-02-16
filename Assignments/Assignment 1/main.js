@@ -217,20 +217,17 @@ function gPush() {
     MS.push(modelMatrix);
 }
 
-// Starfield properties
+// stars
+
 var stars = [];
 var numStars = 60;
 stars_min_size = 0.01
 stars_max_size = 0.06
-stars_min_x = -6
-stars_max_x = 6
-stars_min_y = -6
-stars_max_y = 6
 
 for (var i = 0; i < numStars; i++) {
     stars.push({
-        x: Math.random() * (stars_max_x - stars_min_x) - stars_max_x,
-        y: Math.random() * (stars_max_y - stars_min_y) - stars_max_y,
+        x: Math.random() * (right - left) - right,
+        y: Math.random() * (ytop - bottom) - ytop,
         size: Math.random() * (stars_max_size - stars_min_size) + stars_min_size
     });
 }
@@ -254,11 +251,113 @@ function updateStars(dt) {
         stars[i].x += dt * starSpeed;
         stars[i].y += dt * starSpeed;
         
-        if (stars[i].x > 6 || stars[i].y > 6) {
+        if (stars[i].x > 6) {
             stars[i].x = stars[i].x - 12;
+        }
+
+        else if (stars[i].y > 6) {
             stars[i].y = stars[i].y - 12;
         }
     }
+}
+
+// astronaut
+
+var astronautPosition = [0, 0, 0];
+var astronautRotation = 0;
+var astronautOscillationSpeed = 0;
+var legRotation = 0;
+var armRotation = 100;
+
+function drawAstronaut() {
+    gPush();
+        // gTranslate(astronautPosition[0], astronautPosition[1], astronautPosition[2]);
+
+        gRotate(5, 1, 0, 0);
+        gRotate(-15, 0, 1, 0);
+        
+        // head
+        gPush();
+            setColor(vec4(1.0, 1.0, 1.0, 1.0));
+            gTranslate(0, 1.2, 0);
+            gScale(0.4, 0.4, 0.4);
+            drawSphere();
+            // visor
+            setColor(vec4(0.65, 0.35, 0.0, 1.0));
+            gTranslate(0, 0, 0.7);
+            gScale(0.9, 0.7, 0.4);
+            drawSphere();
+        gPop();
+        
+        // body
+        gPush();
+            setColor(vec4(0.8, 0.8, 0.8, 1.0));
+            gTranslate(0, -0.15, -0.04);
+            gScale(0.6, 1.0, 0.4);
+            drawCube();
+            // patch
+            setColor(vec4(0.2, 0.2, 0.7, 1.0));
+            gTranslate(-0.5, 0.65, 1);
+            gScale(0.3, 0.19, 0.05);
+            drawSphere();
+            // dark blue outlets
+            setColor(vec4(0.2, 0.2, 0.7, 0.0));
+            gTranslate(0.7, -3.25, 0);
+            gScale(0.6, 0.6, 6);
+            drawSphere();
+            setColor(vec4(0.2, 0.2, 0.7, 0.0));
+            gTranslate(3, 0, 0);
+            gScale(1, 1, 1);
+            drawSphere();
+            // light blue outlets
+            setColor(vec4(0.5, 0.5, 1, 1.0));
+            gTranslate(-4, -3.25, 0);
+            gScale(1, 1, 1);
+            drawSphere();
+            setColor(vec4(0.5, 0.5, 1, 1.0));
+            gTranslate(5, 0, 0);
+            gScale(1, 1, 1);
+            drawSphere();
+            // red outlets
+            setColor(vec4(0.8, 0.2, 0.2, 0.0));
+            gTranslate(-4, -3.25, 0);
+            gScale(1, 1, 1);
+            drawSphere();
+            setColor(vec4(0.8, 0.2, 0.2, 0.0));
+            gTranslate(3, 0, 0);
+            gScale(1, 1, 1);
+            drawSphere();
+        gPop();
+        
+        // arms
+        for (var i = -1; i <= 1; i += 2) {
+            gPush();
+                setColor(vec4(0.8, 0.8, 0.8, 1.0));
+                gTranslate(i * 0.75, -0.1, 0.2);
+                gRotate(armRotation * i, 1, 0, 0);
+                gScale(0.18, 0.65, 0.2);
+                drawCube();
+            gPop();
+        }
+        
+        // legs
+        for (var i = -1; i <= 1; i += 2) {
+            gPush();
+                gTranslate(i * 0.4, -1, 0);
+                gScale(0.3, 0.8, 0.3);
+                drawCylinder();
+            gPop();
+        }
+    gPop();
+}
+
+// Astronaut Animation (Oscillation and Arm/Leg Movement)
+function updateAstronaut(dt) {
+    astronautPosition[0] = 0.2 * Math.sin(TIME * astronautOscillationSpeed);
+    astronautPosition[1] = 0.2 * Math.sin(TIME * astronautOscillationSpeed);
+    astronautRotation += dt * 15;
+    armRotation = 20 * Math.sin(TIME * 2);
+    legRotation = 30 * Math.sin(TIME * 2);
 }
 
 function render(timestamp) {
@@ -295,65 +394,67 @@ function render(timestamp) {
 		prevTime = timestamp;
 	}
 	
-	// Sphere example
-	gPush();
-		// Put the sphere where it should be!
-		gTranslate(spherePosition[0],spherePosition[1],spherePosition[2]);
-		gPush();
-		{
-			// Draw the sphere!
-			setColor(vec4(1.0,0.0,0.0,1.0));
-			drawSphere();
-		}
-		gPop();
-	gPop();
+	// // Sphere example
+	// gPush();
+	// 	// Put the sphere where it should be!
+	// 	gTranslate(spherePosition[0],spherePosition[1],spherePosition[2]);
+	// 	gPush();
+	// 	{
+	// 		// Draw the sphere!
+	// 		setColor(vec4(1.0,0.0,0.0,1.0));
+	// 		drawSphere();
+	// 	}
+	// 	gPop();
+	// gPop();
     
-	// Cube example
-	gPush();
-		gTranslate(cubePosition[0],cubePosition[1],cubePosition[2]);
-		gPush();
-		{
-			setColor(vec4(0.0,1.0,0.0,1.0));
-			// Here is an example of integration to rotate the cube around the y axis at 30 degrees per second
-			// new cube rotation around y = current cube rotation around y + 30deg/s*dt
-			cubeRotation[1] = cubeRotation[1] + 30*dt;
-			// This calls a simple helper function to apply the rotation (theta, x, y, z), 
-			// where x,y,z define the axis of rotation. Here is is the y axis, (0,1,0).
-			gRotate(cubeRotation[1],0,1,0);
-			drawCube();
-		}
-		gPop();
-	gPop();
+	// // Cube example
+	// gPush();
+	// 	gTranslate(cubePosition[0],cubePosition[1],cubePosition[2]);
+	// 	gPush();
+	// 	{
+	// 		setColor(vec4(0.0,1.0,0.0,1.0));
+	// 		// Here is an example of integration to rotate the cube around the y axis at 30 degrees per second
+	// 		// new cube rotation around y = current cube rotation around y + 30deg/s*dt
+	// 		cubeRotation[1] = cubeRotation[1] + 30*dt;
+	// 		// This calls a simple helper function to apply the rotation (theta, x, y, z), 
+	// 		// where x,y,z define the axis of rotation. Here is is the y axis, (0,1,0).
+	// 		gRotate(cubeRotation[1],0,1,0);
+	// 		drawCube();
+	// 	}
+	// 	gPop();
+	// gPop();
     
-	// Cylinder example
-	gPush();
-		gTranslate(cylinderPosition[0],cylinderPosition[1],cylinderPosition[2]);
-		gPush();
-		{
-			setColor(vec4(0.0,0.0,1.0,1.0));
-			cylinderRotation[1] = cylinderRotation[1] + 60*dt;
-			gRotate(cylinderRotation[1],0,1,0);
-			drawCylinder();
-		}
-		gPop();
-	gPop();	
+	// // Cylinder example
+	// gPush();
+	// 	gTranslate(cylinderPosition[0],cylinderPosition[1],cylinderPosition[2]);
+	// 	gPush();
+	// 	{
+	// 		setColor(vec4(0.0,0.0,1.0,1.0));
+	// 		cylinderRotation[1] = cylinderRotation[1] + 60*dt;
+	// 		gRotate(cylinderRotation[1],0,1,0);
+	// 		drawCylinder();
+	// 	}
+	// 	gPop();
+	// gPop();	
     
-	// Cone example
-	gPush();
-		gTranslate(conePosition[0],conePosition[1],conePosition[2]);
-		gPush();
-		{
-			setColor(vec4(1.0,1.0,0.0,1.0));
-			coneRotation[1] = coneRotation[1] + 90*dt;
-			gRotate(coneRotation[1],0,1,0);
-			drawCone();
-		}
-		gPop();
-	gPop();
+	// // Cone example
+	// gPush();
+	// 	gTranslate(conePosition[0],conePosition[1],conePosition[2]);
+	// 	gPush();
+	// 	{
+	// 		setColor(vec4(1.0,1.0,0.0,1.0));
+	// 		coneRotation[1] = coneRotation[1] + 90*dt;
+	// 		gRotate(coneRotation[1],0,1,0);
+	// 		drawCone();
+	// 	}
+	// 	gPop();
+	// gPop();
     
     if( animFlag )
         window.requestAnimFrame(render);
 
     drawStars();
+    drawAstronaut();
     updateStars(dt);
+    updateAstronaut(dt);
 }
