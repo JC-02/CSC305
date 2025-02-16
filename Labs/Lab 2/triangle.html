@@ -1,0 +1,47 @@
+
+<html>
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+#version 300 es
+
+in vec4 aPosition;
+
+// ADD COLOURS! Remember we are now storing colour at each vertex, note this coule value is coming "in"
+in vec4 aColour;
+
+// ADD COLOURS! We need to pass that data along to the fragment shader, note this coule value is going "out"
+out vec4 vColour;
+
+void main()
+{
+    gl_Position = aPosition;
+  
+    // Use COLOURS! Pass it along!
+    vColour = aColour;
+}
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+#version 300 es
+
+precision mediump float;
+
+// ADD COLOURS!
+in vec4 vColour;
+
+out vec4  fColor;
+
+void main()
+{
+    // Set COLOURS!
+    fColor = vColour;
+}
+</script>
+
+<script type="text/javascript" src="Common/initShaders.js"></script>
+<script type="text/javascript" src="Common/MV.js"></script>
+<script type="text/javascript" src="triangle.js"></script>
+
+<canvas id="gl-canvas" width="512" height="512"> </canvas>
+
+</html>
