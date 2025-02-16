@@ -219,13 +219,14 @@ function gPush() {
 
 // Starfield properties
 var stars = [];
-var numStars = 40;
+var numStars = 60;
 stars_min_size = 0.01
 stars_max_size = 0.06
 stars_min_x = -6
 stars_max_x = 6
 stars_min_y = -6
 stars_max_y = 6
+
 for (var i = 0; i < numStars; i++) {
     stars.push({
         x: Math.random() * (stars_max_x - stars_min_x) - stars_max_x,
@@ -254,9 +255,8 @@ function updateStars(dt) {
         stars[i].y += dt * starSpeed;
         
         if (stars[i].x > 6 || stars[i].y > 6) {
-            stars[i].x = Math.random() * (stars_max_x - stars_min_x) - stars_max_x;
-            stars[i].y = Math.random() * (stars_max_y - stars_min_y) - stars_max_y;
-            stars[i].size = stars[i].size;
+            stars[i].x = stars[i].x - 12;
+            stars[i].y = stars[i].y - 12;
         }
     }
 }
