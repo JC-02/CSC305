@@ -50,10 +50,10 @@ var controller;
 // In animation it is often useful to think of an object as having some DOF
 // Then the animation is simply evolving those DOF over time. You could very easily make a higher level object that stores these as Position, Rotation (and also Scale!)
 var sphereRotation = [0,0,0];
-var spherePosition = [-4,0,0];
+var spherePosition = [-2,0,0];
 
 var cubeRotation = [0,0,0];
-var cubePosition = [-1,0,0];
+var cubePosition = [-0,0,0];
 
 var cylinderRotation = [0,0,0];
 var cylinderPosition = [1.1,0,0];
@@ -88,7 +88,7 @@ window.onload = function init() {
     if ( !gl ) { alert( "WebGL isn't available" ); }
 
     gl.viewport( 0, 0, canvas.width, canvas.height );
-    gl.clearColor( 0.5, 0.5, 1.0, 1.0 );
+    gl.clearColor( 0, 0, 0, 1.0 );
     
     gl.enable(gl.DEPTH_TEST);
 
@@ -104,7 +104,7 @@ window.onload = function init() {
 	// Initialize some shapes, note that the curved ones are procedural which allows you to parameterize how nice they look
 	// Those number will correspond to how many sides are used to "estimate" a curved surface. More = smoother
     Cube.init(program);
-    Cylinder.init(20,program);
+    Cylinder.init(100,program);
     Cone.init(20,program);
     Sphere.init(36,program);
 
@@ -217,6 +217,49 @@ function gPush() {
     MS.push(modelMatrix);
 }
 
+// Starfield properties
+var stars = [];
+var numStars = 40;
+stars_min_size = 0.01
+stars_max_size = 0.06
+stars_min_x = -6
+stars_max_x = 6
+stars_min_y = -6
+stars_max_y = 6
+for (var i = 0; i < numStars; i++) {
+    stars.push({
+        x: Math.random() * (stars_max_x - stars_min_x) - stars_max_x,
+        y: Math.random() * (stars_max_y - stars_min_y) - stars_max_y,
+        size: Math.random() * (stars_max_size - stars_min_size) + stars_min_size
+    });
+}
+
+function drawStars() {
+    min = 0.01
+    max = 0.1
+    for (var i = 0; i < numStars; i++) {
+        gPush();
+            gTranslate(stars[i].x, stars[i].y, -10);
+            gScale(stars[i].size, stars[i].size, stars[i].size);
+            setColor(vec4(1.0, 1.0, 1.0, 1.0));
+            drawSphere();
+        gPop();
+    }
+}
+
+function updateStars(dt) {
+    var starSpeed = 0.75;
+    for (var i = 0; i < numStars; i++) {
+        stars[i].x += dt * starSpeed;
+        stars[i].y += dt * starSpeed;
+        
+        if (stars[i].x > 6 || stars[i].y > 6) {
+            stars[i].x = Math.random() * (stars_max_x - stars_min_x) - stars_max_x;
+            stars[i].y = Math.random() * (stars_max_y - stars_min_y) - stars_max_y;
+            stars[i].size = stars[i].size;
+        }
+    }
+}
 
 function render(timestamp) {
     
@@ -310,4 +353,7 @@ function render(timestamp) {
     
     if( animFlag )
         window.requestAnimFrame(render);
+
+    drawStars();
+    updateStars(dt);
 }
