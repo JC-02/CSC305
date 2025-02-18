@@ -330,15 +330,13 @@ function drawAstronaut() {
         gPop();
         
         // arms
-        for (var i = -1; i <= 1; i += 2) {
-            gPush();
-                setColor(vec4(0.8, 0.8, 0.8, 1.0));
-                gTranslate(i * 0.75, -0.1, 0.2);
-                gRotate(armRotation * i, 1, 0, 0);
-                gScale(0.18, 0.65, 0.2);
-                drawCube();
-            gPop();
-        }
+        gPush();
+            setColor(vec4(0.8, 0.8, 0.8, 1.0));
+            gTranslate(0.75, -0.1, 0.2);
+            gRotate(30, 0, 0, 1);
+            gScale(0.18, 0.65, 0.2);
+            drawCube();
+        gPop();
         
         // legs
         for (var i = -1; i <= 1; i += 2) {
