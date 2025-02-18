@@ -1,4 +1,3 @@
-
 var canvas;
 var gl;
 
@@ -232,131 +231,24 @@ for (var i = 0; i < numStars; i++) {
     });
 }
 
-function drawStars() {
-    min = 0.01
-    max = 0.1
-    for (var i = 0; i < numStars; i++) {
-        gPush();
-            gTranslate(stars[i].x, stars[i].y, -10);
-            gScale(stars[i].size, stars[i].size, stars[i].size);
-            setColor(vec4(1.0, 1.0, 1.0, 1.0));
-            drawSphere();
-        gPop();
-    }
-}
-
-function updateStars(dt) {
-    var starSpeed = 0.75;
-    for (var i = 0; i < numStars; i++) {
-        stars[i].x += dt * starSpeed;
-        stars[i].y += dt * starSpeed;
-        
-        if (stars[i].x > 6) {
-            stars[i].x = stars[i].x - 12;
-        }
-
-        else if (stars[i].y > 6) {
-            stars[i].y = stars[i].y - 12;
-        }
-    }
-}
-
-// astronaut
-
 var astronautPosition = [0, 0, 0];
-var astronautRotation = 0;
-var astronautOscillationSpeed = 0;
-var legRotation = 0;
-var armRotation = 100;
+var hit_left = 0;
+var hit_bottom = 0;
+var arm1Rotation = 45;
+var arm2Rotation = -45;
+var leg1Rotation = 30;
+var leg2Rotation = -30;
+var leg1upperRotation = 30;
+var leg2upperRotation = -30;
+var leg1lowerRotation = 20;
+var leg2lowerRotation = -20;
 
-function drawAstronaut() {
-    gPush();
-        // gTranslate(astronautPosition[0], astronautPosition[1], astronautPosition[2]);
-
-        gRotate(5, 1, 0, 0);
-        gRotate(-15, 0, 1, 0);
-        
-        // head
-        gPush();
-            setColor(vec4(1.0, 1.0, 1.0, 1.0));
-            gTranslate(0, 1.2, 0);
-            gScale(0.4, 0.4, 0.4);
-            drawSphere();
-            // visor
-            setColor(vec4(0.65, 0.35, 0.0, 1.0));
-            gTranslate(0, 0, 0.7);
-            gScale(0.9, 0.7, 0.4);
-            drawSphere();
-        gPop();
-        
-        // body
-        gPush();
-            setColor(vec4(0.8, 0.8, 0.8, 1.0));
-            gTranslate(0, -0.15, -0.04);
-            gScale(0.6, 1.0, 0.4);
-            drawCube();
-            // patch
-            setColor(vec4(0.2, 0.2, 0.7, 1.0));
-            gTranslate(-0.5, 0.65, 1);
-            gScale(0.3, 0.19, 0.05);
-            drawSphere();
-            // dark blue outlets
-            setColor(vec4(0.2, 0.2, 0.7, 0.0));
-            gTranslate(0.7, -3.25, 0);
-            gScale(0.6, 0.6, 6);
-            drawSphere();
-            setColor(vec4(0.2, 0.2, 0.7, 0.0));
-            gTranslate(3, 0, 0);
-            gScale(1, 1, 1);
-            drawSphere();
-            // light blue outlets
-            setColor(vec4(0.5, 0.5, 1, 1.0));
-            gTranslate(-4, -3.25, 0);
-            gScale(1, 1, 1);
-            drawSphere();
-            setColor(vec4(0.5, 0.5, 1, 1.0));
-            gTranslate(5, 0, 0);
-            gScale(1, 1, 1);
-            drawSphere();
-            // red outlets
-            setColor(vec4(0.8, 0.2, 0.2, 0.0));
-            gTranslate(-4, -3.25, 0);
-            gScale(1, 1, 1);
-            drawSphere();
-            setColor(vec4(0.8, 0.2, 0.2, 0.0));
-            gTranslate(3, 0, 0);
-            gScale(1, 1, 1);
-            drawSphere();
-        gPop();
-        
-        // arms
-        gPush();
-            setColor(vec4(0.8, 0.8, 0.8, 1.0));
-            gTranslate(0.75, -0.1, 0.2);
-            gRotate(30, 0, 0, 1);
-            gScale(0.18, 0.65, 0.2);
-            drawCube();
-        gPop();
-        
-        // legs
-        for (var i = -1; i <= 1; i += 2) {
-            gPush();
-                gTranslate(i * 0.4, -1, 0);
-                gScale(0.3, 0.8, 0.3);
-                drawCylinder();
-            gPop();
-        }
-    gPop();
-}
-
-// Astronaut Animation (Oscillation and Arm/Leg Movement)
-function updateAstronaut(dt) {
-    astronautPosition[0] = 0.2 * Math.sin(TIME * astronautOscillationSpeed);
-    astronautPosition[1] = 0.2 * Math.sin(TIME * astronautOscillationSpeed);
-    astronautRotation += dt * 15;
-    armRotation = 20 * Math.sin(TIME * 2);
-    legRotation = 30 * Math.sin(TIME * 2);
-}
+var jellyfishPosition = [0, 0, -2];
+var jellyfishRotation = 0;
+var tentacleWaveSpeed = 10;
+var jellyfishOrbitSpeed = 0.3;
+var jellyfishOrbitRadius = 2.3;
+var jellyfishAngle = 0;
 
 function render(timestamp) {
     
@@ -392,67 +284,325 @@ function render(timestamp) {
 		prevTime = timestamp;
 	}
 	
-	// // Sphere example
-	// gPush();
-	// 	// Put the sphere where it should be!
-	// 	gTranslate(spherePosition[0],spherePosition[1],spherePosition[2]);
-	// 	gPush();
-	// 	{
-	// 		// Draw the sphere!
-	// 		setColor(vec4(1.0,0.0,0.0,1.0));
-	// 		drawSphere();
-	// 	}
-	// 	gPop();
-	// gPop();
-    
-	// // Cube example
-	// gPush();
-	// 	gTranslate(cubePosition[0],cubePosition[1],cubePosition[2]);
-	// 	gPush();
-	// 	{
-	// 		setColor(vec4(0.0,1.0,0.0,1.0));
-	// 		// Here is an example of integration to rotate the cube around the y axis at 30 degrees per second
-	// 		// new cube rotation around y = current cube rotation around y + 30deg/s*dt
-	// 		cubeRotation[1] = cubeRotation[1] + 30*dt;
-	// 		// This calls a simple helper function to apply the rotation (theta, x, y, z), 
-	// 		// where x,y,z define the axis of rotation. Here is is the y axis, (0,1,0).
-	// 		gRotate(cubeRotation[1],0,1,0);
-	// 		drawCube();
-	// 	}
-	// 	gPop();
-	// gPop();
-    
-	// // Cylinder example
-	// gPush();
-	// 	gTranslate(cylinderPosition[0],cylinderPosition[1],cylinderPosition[2]);
-	// 	gPush();
-	// 	{
-	// 		setColor(vec4(0.0,0.0,1.0,1.0));
-	// 		cylinderRotation[1] = cylinderRotation[1] + 60*dt;
-	// 		gRotate(cylinderRotation[1],0,1,0);
-	// 		drawCylinder();
-	// 	}
-	// 	gPop();
-	// gPop();	
-    
-	// // Cone example
-	// gPush();
-	// 	gTranslate(conePosition[0],conePosition[1],conePosition[2]);
-	// 	gPush();
-	// 	{
-	// 		setColor(vec4(1.0,1.0,0.0,1.0));
-	// 		coneRotation[1] = coneRotation[1] + 90*dt;
-	// 		gRotate(coneRotation[1],0,1,0);
-	// 		drawCone();
-	// 	}
-	// 	gPop();
-	// gPop();
+	
     
     if( animFlag )
         window.requestAnimFrame(render);
 
     drawStars();
     drawAstronaut();
+    drawJellyfish();
     updateStars(dt);
     updateAstronaut(dt);
+    updateJellyfish(dt);
+
+    function drawStars() {
+        min = 0.01
+        max = 0.1
+        for (var i = 0; i < numStars; i++) {
+            gPush();
+                gTranslate(stars[i].x, stars[i].y, -10);
+                gScale(stars[i].size, stars[i].size, stars[i].size);
+                setColor(vec4(1.0, 1.0, 1.0, 1.0));
+                drawSphere();
+            gPop();
+        }
+    }
+    
+    function updateStars(dt) {
+        var starSpeed = 0.75;
+        for (var i = 0; i < numStars; i++) {
+            stars[i].x += dt * starSpeed;
+            stars[i].y += dt * starSpeed;
+            
+            if (stars[i].x > 6) {
+                stars[i].x = stars[i].x - 12;
+            }
+    
+            else if (stars[i].y > 6) {
+                stars[i].y = stars[i].y - 12;
+            }
+        }
+        return dt
+    }
+
+    function drawAstronaut() {
+        gPush();
+    
+            gTranslate(astronautPosition[0], astronautPosition[1], astronautPosition[2]);
+    
+            gRotate(10, 1, 0, 0);
+            gRotate(-20, 0, 1, 0);
+            
+            // head
+            gPush();
+                setColor(vec4(1.0, 1.0, 1.0, 1.0));
+                gTranslate(0, 1.2, 0);
+                gScale(0.4, 0.4, 0.4);
+                drawSphere();
+    
+                // visor
+                setColor(vec4(0.65, 0.35, 0.0, 1.0));
+                gTranslate(0, 0, 0.7);
+                gScale(0.9, 0.7, 0.4);
+                drawSphere();
+            gPop();
+            
+            // body
+            gPush();
+                setColor(vec4(0.8, 0.8, 0.8, 1.0));
+                gTranslate(0, -0.15, -0.04);
+                gScale(0.6, 1.0, 0.4);
+                drawCube();
+                
+                // arms
+                gPush();
+                    gPush();
+                        setColor(vec4(0.8, 0.8, 0.8, 1.0));
+                        gTranslate(1.5, 0.25, 0.5);
+                        gRotate(arm1Rotation, 0, 0, 1);
+                        gScale(0.2, 0.6, 0.5);
+                        drawCube();
+                    gPop();
+                gPop(); 
+                gPush();
+                    setColor(vec4(0.8, 0.8, 0.8, 1.0));
+                    gTranslate(-1.5, 0.25, -0.5);
+                    gRotate(arm2Rotation, 0, 0, 1);
+                    gScale(0.2, 0.6, 0.5);
+                    drawCube();
+                gPop();
+    
+                // legs
+                gPush();
+                    setColor(vec4(0.8, 0.8, 0.8, 1.0));
+                    gTranslate(0.6, -1.3, -0.2);
+                    gRotate(leg1upperRotation, 1, 0, 0);
+                    gScale(0.2, 0.4, 0.35);
+                    drawCube();
+                    gPush();
+                        gTranslate(0, -1.3, -0.3);
+                        gRotate(leg1lowerRotation, 1, 0, 0);
+                        gScale(1, 1, 0.75);
+                        drawCube();
+                        gPush();
+                            gTranslate(0, -1, 0.5);
+                            gScale(1.2, 0.25, 1.25);
+                            drawCube();
+                        gPop();
+                    gPop();
+                gPop();
+                gPush();
+                    setColor(vec4(0.8, 0.8, 0.8, 1.0));
+                    gTranslate(-0.6, -1.3, -0.2);
+                    gRotate(leg2upperRotation, 1, 0, 0);
+                    gScale(0.2, 0.4, 0.35);
+                    drawCube();
+                    gPush();
+                        gTranslate(0, -1.3, -0.3);
+                        gRotate(leg2lowerRotation, 1, 0, 0);
+                        gScale(1, 1, 0.75);
+                        drawCube();
+                        gPush();
+                            gTranslate(0, -1, 0.5);
+                            gScale(1.2, 0.25, 1.25);
+                            drawCube();
+                        gPop();
+                    gPop();
+                gPop();
+    
+                // patch
+                setColor(vec4(0.2, 0.2, 0.7, 1.0));
+                gTranslate(-0.5, 0.65, 1);
+                gScale(0.3, 0.19, 0.05);
+                drawSphere();
+    
+                // dark blue outlets
+                setColor(vec4(0.2, 0.2, 0.7, 0.0));
+                gTranslate(0.7, -3.25, 0);
+                gScale(0.6, 0.6, 6);
+                drawSphere();
+                setColor(vec4(0.2, 0.2, 0.7, 0.0));
+                gTranslate(3, 0, 0);
+                drawSphere();
+    
+                // light blue outlets
+                setColor(vec4(0.5, 0.5, 1, 1.0));
+                gTranslate(-4, -3.25, 0);
+                drawSphere();
+                setColor(vec4(0.5, 0.5, 1, 1.0));
+                gTranslate(5, 0, 0);
+                drawSphere();
+    
+                // red outlets
+                setColor(vec4(0.8, 0.2, 0.2, 0.0));
+                gTranslate(-4, -3.25, 0);
+                drawSphere();
+                setColor(vec4(0.8, 0.2, 0.2, 0.0));
+                gTranslate(3, 0, 0);
+                drawSphere();
+                           
+            gPop();
+        gPop();
+    }
+
+    function updateAstronaut(dt) {
+    
+        if(hit_left == 0 & astronautPosition[0] >= -2){
+            astronautPosition[0] = astronautPosition[0] - 0.003;
+        }else if(hit_left == 0 & astronautPosition[0] <= -2){
+            astronautPosition[0] = astronautPosition[0] + 0.003;
+            hit_left = 1;
+        }else if(hit_left == 1 & astronautPosition[0] <= 2){
+            astronautPosition[0] = astronautPosition[0] + 0.003;
+        }else if(hit_left == 1 && astronautPosition[0] >= 2){
+            astronautPosition[0] = astronautPosition[0] - 0.003;
+            hit_left = 0;
+        }
+        
+        if(hit_bottom == 0 & astronautPosition[1] >= -2){
+            astronautPosition[1] = astronautPosition[1] - 0.003;
+        }else if(hit_bottom == 0 & astronautPosition[1] <= -2){
+            astronautPosition[1] = astronautPosition[1] + 0.003;
+            hit_bottom = 1;
+        }else if(hit_bottom == 1 & astronautPosition[1] <= 2){
+            astronautPosition[1] = astronautPosition[1] + 0.003;
+        }else if(hit_bottom == 1 && astronautPosition[1] >= 2){
+            astronautPosition[1] = astronautPosition[1] - 0.003;
+            hit_bottom = 0;
+        }
+    
+        arm1Rotation = 45 + 8 * Math.sin(timestamp/800);
+        arm2Rotation = -45 + 6 * Math.sin(timestamp/800);
+        
+        leg1upperRotation = 30 * Math.sin(timestamp/800);
+        leg2upperRotation = -30 * Math.sin(timestamp/800);
+        leg1lowerRotation = 20 * Math.sin(timestamp/800) + 20;
+        leg2lowerRotation = -20 * Math.sin(timestamp/800) + 20;
+        
+    }
+
+    function updateJellyfish(dt){
+
+    jellyfishAngle -= dt * jellyfishOrbitSpeed;
+
+    if(dt == 0){
+        jellyfishPosition[0] = astronautPosition[0];
+    }else{
+        jellyfishPosition[0] = astronautPosition[0] + Math.cos(jellyfishAngle) * jellyfishOrbitRadius;
+    }
+
+    jellyfishPosition[1] = 0
+    jellyfishPosition[2] = astronautPosition[2] + Math.sin(jellyfishAngle) * jellyfishOrbitRadius;
+    
+    jellyfishRotation = -(jellyfishAngle * (180 / Math.PI)) - 90;
+
+    }
+
+    function drawJellyfish(){
+        gPush();
+            
+        // set jellyfish to initial position and orientation
+            gTranslate(jellyfishPosition[0], jellyfishPosition[1], jellyfishPosition[2]);
+            gRotate(jellyfishRotation, 0, 1, 0);
+
+            // body
+            gPush();
+                setColor(vec4(1.0, 0.1, 0.6, 1.0));
+                gScale(0.4, 0.8, 0.8);
+                drawSphere();
+                gPush();
+                    gTranslate(0.9, 0, 0);
+                    gScale(0.75, 0.65, 0.65);
+                    drawSphere();
+                    
+                    // middle tentacle
+                    gPush();
+                        setColor(vec4(0.65, 0.35, 0.0, 1.0));
+                        gTranslate(1.25, 0, 0);
+                        gScale(0.75, 0.16, 0.16);
+                        gRotate(Math.sin(timestamp/600) * tentacleWaveSpeed, 0, 0, 1);
+                        drawSphere();
+                        gPush();
+                            gTranslate(1.6, 0, 0);
+                            gRotate(Math.sin(timestamp/600) * tentacleWaveSpeed, 0, 0, 1);
+                            drawSphere();
+                            gPush();
+                                gTranslate(1.6, 0, 0);
+                                gRotate(Math.sin(timestamp/600) * tentacleWaveSpeed, 0, 1, 1);
+                                drawSphere();
+                                gPush();
+                                    gTranslate(1.6, 0, 0);
+                                    gRotate(Math.sin(timestamp/600) * tentacleWaveSpeed, 0, 0, 1);
+                                    drawSphere();
+                                    gPush();
+                                        gTranslate(1.6, 0, 0);
+                                        gRotate(Math.sin(timestamp/600) * tentacleWaveSpeed, 0, 0, 1);
+                                        drawSphere();
+                                    gPop();
+                                gPop();
+                            gPop();
+                        gPop();
+                    gPop();
+
+                    // top tentacle
+                    gPush();
+                        gTranslate(1.25, 0.75, 0);
+                        gScale(0.75, 0.16, 0.16);
+                        gRotate(Math.sin(timestamp/600) * tentacleWaveSpeed, 0, 0, 1);
+                        drawSphere();
+                        gPush();
+                            gTranslate(1.6, 0, 0);
+                            gRotate(Math.sin(timestamp/600) * tentacleWaveSpeed, 0, 0, 1);
+                            drawSphere();
+                            gPush();
+                                gTranslate(1.6, 0, 0);
+                                gRotate(Math.sin(timestamp/600) * tentacleWaveSpeed, 0, 1, 1);
+                                drawSphere();
+                                gPush();
+                                    gTranslate(1.6, 0, 0);
+                                    gRotate(Math.sin(timestamp/600) * tentacleWaveSpeed, 0, 0, 1);
+                                    drawSphere();
+                                    gPush();
+                                        gTranslate(1.6, 0, 0);
+                                        gRotate(Math.sin(timestamp/600) * tentacleWaveSpeed, 0, 0, 1);
+                                        drawSphere();
+                                    gPop();
+                                gPop();
+                            gPop();
+                        gPop();
+                    gPop();
+
+                    // bottom tentacle
+                    gPush();
+                        gTranslate(1.25, -0.75, 0);
+                        gScale(0.75, 0.16, 0.16);
+                        gRotate(Math.sin(timestamp/600) * tentacleWaveSpeed, 0, 0, 1);
+                        drawSphere();
+                        gPush();
+                            gTranslate(1.6, 0, 0);
+                            gRotate(Math.sin(timestamp/600) * tentacleWaveSpeed, 0, 0, 1);
+                            drawSphere();
+                            gPush();
+                                gTranslate(1.6, 0, 0);
+                                gRotate(Math.sin(timestamp/600) * tentacleWaveSpeed, 0, 1, 1);
+                                drawSphere();
+                                gPush();
+                                    gTranslate(1.6, 0, 0);
+                                    gRotate(Math.sin(timestamp/600) * tentacleWaveSpeed, 0, 0, 1);
+                                    drawSphere();
+                                    gPush();
+                                        gTranslate(1.6, 0, 0);
+                                        gRotate(Math.sin(timestamp/600) * tentacleWaveSpeed, 0, 0, 1);
+                                        drawSphere();
+                                    gPop();
+                                gPop();
+                            gPop();
+                        gPop();
+                    gPop();
+                gPop();
+            gPop();
+        gPop();
+    }
+
 }
